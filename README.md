@@ -46,7 +46,7 @@ Access is segmented by access tokens, which constitute the accesses to the respe
 API access is always via the "token" header and does not expose database data. Read and write settings are configured on the database server.
 
 ```http
-POST /store HTTP1.1
+POST /store HTTP/1.1
 Token: r7Ff35XqjFbwVRDCBrJjWpXFNcfW24h7T07zHyRyUY
 ...
 ```
@@ -54,7 +54,7 @@ Token: r7Ff35XqjFbwVRDCBrJjWpXFNcfW24h7T07zHyRyUY
 Flex also allows you to run pure SQL queries. It's recommended to use it only for reading data, and to use the Flex ready functions for writing in the database.
 
 ```http
-POST /query HTTP1.1
+POST /query HTTP/1.1
 Token: r7Ff35XqjFbwVRDCBrJjWpXFNcfW24h7T07zHyRyUY
 Content-Type: application/x-sql
 Flex-Query-Param-Brand: lamborghini
