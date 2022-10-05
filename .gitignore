@@ -1,0 +1,6 @@
+.phpintel
+composer.lock
+php_errors.log
+vendor/*
+storage/*
+environment.json

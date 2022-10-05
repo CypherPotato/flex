@@ -1,0 +1,15 @@
+{
+    "development": "true",
+    "tokens": [
+        {
+            "token": "aaabbbcccddd",
+            "label": "",
+            "db_connection": {
+                "db_name": "",
+                "db_host": "",
+                "db_user": "",
+                "db_pass": ""
+            }
+        }
+    ]
+}
