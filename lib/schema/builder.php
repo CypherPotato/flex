@@ -35,9 +35,9 @@ trait build
             $toIndex = $alias->index;
             $type = $alias->full_name;
             $unique = $alias->unique ? "UNIQUE" : "";
-            $default = "";
+            $default = $alias->default;
 
-            if(!empty($alias->default)) {
+            if ($default !== null && $default !== "") {
                 $default = "DEFAULT " . sanitize_db_literal($default);
             }
 

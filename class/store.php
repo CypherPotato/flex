@@ -31,7 +31,8 @@ class store
                 $objs[$field_name] = $b;
             }
 
-            if (!str_contains($insert_properties, $field_name)) $insert_properties .= sanitize_db_constant($field_name) . ",";
+            $field_name_sanitized = sanitize_db_constant($field_name);
+            if (!str_contains($insert_properties, $field_name_sanitized)) $insert_properties .= $field_name_sanitized . ",";
             if (!in_array(":" . $field_name, $insert_schema)) $insert_schema[] = ":" . $field_name;
         }
 
@@ -40,8 +41,9 @@ class store
         $insert_properties = rtrim($insert_properties, ',');
 
         $sql = "INSERT INTO $collection_name ($insert_properties) VALUES ($insert_values_schame);";
-        $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+
         try {
+            $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             $sth->execute($objs);
         } catch (Exception $ex) {
             add_message("error", $ex->getMessage());
@@ -93,9 +95,8 @@ class store
         $collection_name = sanitize_db_constant($collection_name);
         $sql = "UPDATE $collection_name SET $update_schema WHERE id = :id;";
 
-        $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-
         try {
+            $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             $sth->execute($objs);
         } catch (Exception $ex) {
             add_message("error", $ex->getMessage());
@@ -185,8 +186,9 @@ class store
 
         if (isset(REQUEST->collection->truncate) && REQUEST->collection->truncate != false) {
             $sql = "TRUNCATE TABLE $collection_name;";
-            $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+
             try {
+                $sth = DB_CONNECTION->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
                 $sth->execute();
             } catch (Exception $ex) {
                 add_message("error", $ex->getMessage());
@@ -218,7 +220,8 @@ class store
                     $objs[$field_name] = $b;
                 }
 
-                if (!str_contains($insert_properties, $field_name)) $insert_properties .= sanitize_db_constant($field_name) . ",";
+                $field_name_sanitized = sanitize_db_constant($field_name);
+                if (!str_contains($insert_properties, $field_name_sanitized)) $insert_properties .= $field_name_sanitized . ",";
                 if (!in_array(":" . $field_name, $insert_schema)) $insert_schema[] = ":" . $field_name;
             }
 

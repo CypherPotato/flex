@@ -4,34 +4,49 @@ use Inphinit\Http\Response;
 
 header("Server: FLEX/SQL 1.0alpha-1233552");
 
+define('CONTENT_TYPE_HTML', 13);
+define('CONTENT_TYPE_X_SQL', 12);
+define('CONTENT_TYPE_JSON', 11);
+
 $GLOBALS["success"] = true;
 $GLOBALS["messages"] = [];
 $GLOBALS["supress-messaging"] = false;
 
 define("RAW_REQUEST", file_get_contents('php://input'));
 if (!empty(RAW_REQUEST) && $_SERVER['REQUEST_METHOD'] != "GET") {
-    switch ($_SERVER["CONTENT_TYPE"]) {
+    if (str_contains($_SERVER["CONTENT_TYPE"], "application/json")) {
+        define('REQUEST', json_decode(RAW_REQUEST, false));
+        define('REQUEST_CONTENT_TYPE', CONTENT_TYPE_JSON);
+        define('REQUEST_TREE', json_tree(REQUEST));
+        $err = json_last_error();
+        if ($err != 0) {
+            add_message("error", "JSON decoding error: " . $err);
+            json_response(null, true);
+        }
+    } else if (str_contains($_SERVER["CONTENT_TYPE"], "application/x-sql")) {
+        define('REQUEST', RAW_REQUEST);
+        define('REQUEST_CONTENT_TYPE', CONTENT_TYPE_X_SQL);
+        define('REQUEST_TREE', []);
+    } else {
+        add_message("error", "Invalid Content-Type received: " . $_SERVER["CONTENT_TYPE"]);
+        json_response(null, true);
+    }
+}
+
+if (isset($_SERVER["HTTP_ACCEPT"])) {
+    switch ($_SERVER["HTTP_ACCEPT"]) {
         case "application/json":
-            define('REQUEST', json_decode(RAW_REQUEST, false));
-            define('REQUEST_TREE', json_tree(REQUEST));
-
-            $err = json_last_error();
-            if ($err != 0) {
-                add_message("error", "JSON decoding error: " . $err);
-                json_response(null, true);
-                break;
-            }
-
+            define('VIEW_AS', CONTENT_TYPE_JSON);
             break;
-        case "application/x-sql";
-            define('REQUEST', RAW_REQUEST);
-            define('REQUEST_TREE', []);
+        case "text/html":
+            define('VIEW_AS', CONTENT_TYPE_HTML);
             break;
         default:
-            add_message("error", "Invalid Content-Type received.");
-            json_response(null, true);
+            define('VIEW_AS', CONTENT_TYPE_JSON);
             break;
     }
+} else {
+    define('VIEW_AS', CONTENT_TYPE_JSON);
 }
 
 function json_tree(array|object $json_object, string $root = "")

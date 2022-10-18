@@ -58,7 +58,7 @@ class collections
         $schema_built = \Schema::build(REQUEST->schema, true);
 
         $sql .= implode(",\n", $schema_built) . ");";
-
+        
         try {
             $s = DB_CONNECTION->prepare($sql);
             DB_CONNECTION->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -97,14 +97,14 @@ class collections
 
         $schema_built = \Schema::diff($old_schema, REQUEST->schema);
 
-        if(sizeof($schema_built) == 0) {
+        if (sizeof($schema_built) == 0) {
             add_message("info", "Nothing to migrate.");
             return json_response();
         }
 
         $sql = "ALTER TABLE $collection_name\n";
         $sql .= implode(",\n", $schema_built) . ";";
-        
+
         try {
             $s = DB_CONNECTION->prepare($sql);
             DB_CONNECTION->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -32,7 +32,6 @@ function sql_query_parse_key(mixed $object): array
             !empty($v)
             && (str_starts_with($v, '{') || str_starts_with($v, '['))
             &&  (str_ends_with($v, '}') || str_ends_with($v, ']'))
-            &&  str_contains($v, '"')
         ) {
             // maybe it's a JSON
             $v = json_decode($v) ?? $v;
@@ -80,12 +79,22 @@ function sql_query($query): array
 
     DB_CONNECTION->commit();
 
+    $columns = [];
     $newResults = [];
     foreach ($results as $res) {
+        if (empty($columns)) {
+            foreach ($res as $k => $v) {
+                $columns[] = $k;
+            }
+        }
         $newResults[] = sql_query_parse_key($res);
     }
 
     header("Flex-Query-Length: " . sizeof($newResults));
+    header("Flex-Query-Columns: " . implode(',', $columns));
+
+    define('SQL_QUERY_RESULTS', $newResults);
+    define('SQL_QUERY_COLUMNS', $columns);
 
     return $newResults;
 }

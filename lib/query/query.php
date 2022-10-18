@@ -108,9 +108,15 @@ function run_query($query): array
         $sql .= " OFFSET " . sanitize_db_int($skip);
     }
 
+    $columns = [];
     $ongoing_results = [];
     $results = DB_CONNECTION->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     foreach ($results as $res) {
+        if (empty($columns)) {
+            foreach ($res as $k => $v) {
+                $columns[] = $k;
+            }
+        }
         foreach ($res as $field => $value) {
             if (str_contains($collection_description[$field], "timestamp")) {
                 $res[$field] = strtotime($value);
@@ -122,6 +128,9 @@ function run_query($query): array
         $ongoing_results[] = $res;
     }
     header("Flex-Query-Length: " . sizeof($output));
+
+    define('SQL_QUERY_RESULTS', $ongoing_results);
+    define('SQL_QUERY_COLUMNS', $columns);
 
     return $ongoing_results;
 }
