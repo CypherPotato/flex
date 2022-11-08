@@ -118,9 +118,16 @@ function run_query($query): array
             }
         }
         foreach ($res as $field => $value) {
+            if ($value === null) {
+                $res[$field] = null;
+                continue;
+            }
             if (str_contains($collection_description[$field], "timestamp")) {
                 $res[$field] = strtotime($value);
             }
+            //if (str_contains($collection_description[$field], "decimal")) {
+            //    $res[$field] = floatval($value);
+            //}
             if (str_contains($collection_description[$field], "json")) {
                 $res[$field] = json_decode($value);
             }
