@@ -41,6 +41,9 @@ if (isset($_SERVER["HTTP_ACCEPT"])) {
         case "text/html":
             define('VIEW_AS', CONTENT_TYPE_HTML);
             break;
+        case "application/x-sql":
+            define('VIEW_AS', CONTENT_TYPE_X_SQL);
+            break;
         default:
             define('VIEW_AS', CONTENT_TYPE_JSON);
             break;

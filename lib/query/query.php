@@ -108,6 +108,10 @@ function run_query($query): array
         $sql .= " OFFSET " . sanitize_db_int($skip);
     }
 
+    if (VIEW_AS == CONTENT_TYPE_X_SQL) {
+        die($sql);
+    }
+
     $columns = [];
     $ongoing_results = [];
     $results = DB_CONNECTION->query($sql)->fetchAll(PDO::FETCH_ASSOC);
