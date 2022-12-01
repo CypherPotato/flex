@@ -2,7 +2,6 @@
 
 function sanitize_db_constant($value)
 {
-    if($value == null) return "NULL";
     return '`' . preg_replace('/[^a-zA-Z0-9_\-.]*/', '', $value) . '`';
 }
 
