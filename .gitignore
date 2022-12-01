@@ -4,3 +4,4 @@ php_errors.log
 vendor/*
 storage/*
 environment.json
+access.log

@@ -125,6 +125,22 @@ function json_response($content = null, bool $close_connection = false, $raw = f
             'response' => $content
         ]);
     }
+    
+    if (file_exists("access.log") && filesize("access.log") > 1024 * 1024 * 1024 * 5) {
+        file_put_contents("access.log", "");
+    }
+
+    $raw_request = $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . "\n";
+    foreach(apache_request_headers() as $h => $v) {
+        $raw_request .= "$h: $v\n";
+    }
+    $raw_request .= "\n\n";
+    $raw_request .= RAW_REQUEST;
+    $raw_request .= "\n\n";
+    $raw_request .= $json_response;
+    $raw_request .= "\n-----------------------------------------------------------------------------------------\n";
+
+    file_put_contents("access.log", $raw_request, FILE_APPEND);
 
     if (!$close_connection) {
         return $json_response;
